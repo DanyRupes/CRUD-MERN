@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import ReactDOM from "react-dom";
+import moment from 'moment'
 import "antd/dist/antd.css";
 import { Container } from "reactstrap";
 import Details from "./Details";
@@ -28,7 +29,7 @@ class Form_sam extends Component {
     super(props);
     
     this.state = {
-      date: "",
+      date: moment().format(),
       start_time: "",
       end_time: "",
       title: "",
@@ -48,6 +49,24 @@ class Form_sam extends Component {
     this.onStatus = this.onStatus.bind(this)
     this.onSubmit = this.onSubmit.bind(this) 
   }
+
+
+  componentDidMount(){
+    console.log(this.props.location.edit_id)
+
+    axios.post('/edit_this', {
+      "id":this.props.location.edit_id
+    })
+    .then((out)=>{
+      console.log(out.data.title)
+      this.setState({date:out.data.date})
+      this.setState({title:out.data.title})
+      this.setState({price:out.data.price})
+    })
+    .catch((err)=>console.log(err))
+  }
+
+
 
   onDate(date, dateString) {
    
@@ -203,6 +222,7 @@ class Form_sam extends Component {
                       placeholder="Select Date"
                       onChange={this.onDate}
                       onOk={this.onOk}
+                      defaultValue={moment(this.state.date)}
                     />
                   </div>
                 </Form.Item>
@@ -234,23 +254,23 @@ class Form_sam extends Component {
               <div className="text">
                 <Form.Item {...formItemLayout} label="Title">
                   <div className="element">
-                    <Input className="inp" type="text" onChange={this.onTitle} />
+                    <Input className="inp" type="text" onChange={this.onTitle} value={this.state.title} />
                   </div>
                 </Form.Item>
               </div>
               <div className="text">
                 <Form.Item {...formItemLayout} label="Price">
                   <div className="element">
-                    <Input className="inp" type="number" onChange={this.onPrice} />
+                    <Input className="inp" type="number" onChange={this.onPrice} value={this.state.price} />
                   </div>
                 </Form.Item>
               </div>
               <div className="text">
                 <Form.Item {...formItemLayout} label="Category" >
                   <div className="element">
-                    <Dropdown overlay={menu} >
+                    <Dropdown overlay={menu}  >
                       <Button className="inp">
-                        CATEGORY
+                        {this.state.title}
                         <Icon type="down" />
                       </Button>
                     </Dropdown>

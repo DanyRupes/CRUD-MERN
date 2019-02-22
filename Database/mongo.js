@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 
 url = "mongodb://danyrupes:A12345678@ds147125.mlab.com:47125/blues_customer"
 
-mongoose.connect(url);
+mongoose.connect(url,{useNewUrlParser: true});
 
 
 mongoose.connection.on('connected', function(){

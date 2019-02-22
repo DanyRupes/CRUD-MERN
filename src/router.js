@@ -10,10 +10,10 @@ app.use(express.static(path.join(__dirname, '/src')))
 // app.use(express.static(path.join(__dirname, '/src/Components')))
 
 
-    // app.get('/',(req, res)=>{
-    //     console.log("Connecting Backend ")
-    //     res.json({"process":"done"})
-    // })
+    app.get('/letsgo',(req, res)=>{
+        // console.log("Connecting Backend ")
+        res.json({"process":1})
+    })
 
 
     app.post('/submit',(req, res)=>{
@@ -28,8 +28,7 @@ app.use(express.static(path.join(__dirname, '/src')))
       
         
         //  for getting of bookings of an particular user!!!
-    app.post('/get_list', (req, res)=>{
-        console.log(req.body)
+    app.get('/get_list', (req, res)=>{
         mongo.Customer.find()
         .then((out)=>res.send(out))
         .catch((err)=>err)
