@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import ReactDOM from "react-dom";
 import moment from 'moment'
 import "antd/dist/antd.css";
@@ -29,14 +29,22 @@ class Form_sam extends Component {
     super(props);
     
     this.state = {
-      date: moment().format(),
+      id:"",
+      dateO:moment(),
+      dates:moment(),
+      updated:false,
       start_time: "",
+      start_times:moment(),
       end_time: "",
+      end_times:moment(),
       title: "",
       price: "",
-      category: "",
+      category: "Select Category",
       img: "",
-      status: ""
+      status: "Set Status",
+      loading:true,
+      redirect: false,
+      submitType:1,
     };
     this.onDate = this.onDate.bind(this)
     this.onStartTime = this.onStartTime.bind(this)
@@ -51,27 +59,56 @@ class Form_sam extends Component {
   }
 
 
-  componentDidMount(){
-    console.log(this.props.location.edit_id)
-
-    axios.post('/edit_this', {
-      "id":this.props.location.edit_id
-    })
-    .then((out)=>{
-      console.log(out.data.title)
-      this.setState({date:out.data.date})
-      this.setState({title:out.data.title})
-      this.setState({price:out.data.price})
-    })
-    .catch((err)=>console.log(err))
+  componentWillMount(){
+    console.log(this.props)
+   try{
+     const { edit_id } = this.props.location.state
+     console.log(edit_id) //this.props.location.edit_id
+     if(edit_id!=undefined){
+          axios.post('/edit_this', {
+            "id":edit_id
+          })
+          .then((out)=>{
+            console.log(out.data)
+            //  this.setState({date:out.data.date})
+            
+            this.setState({
+              "dateO":out.data.dateO,
+              dates:out.data.dates,
+              updated:true,
+              submitType:2,
+              "id":out.data._id,
+            start_time:out.data.start_time,end_time:out.data.end_time,
+            start_times:out.data.start_times, end_times:out.data.end_times,
+            title:out.data.title,price:out.data.price,category:out.data.category,
+            status:out.data.status})
+            
+            console.log("----------------------------")
+            console.log(this.state.dates)
+ 
+      })
+      .catch((err)=>console.log(err))
+     }else {
+       console.log("startEdit")
+     }
+     
+   } 
+   catch(e){console.log(e)}
   }
 
 
 
-  onDate(date, dateString) {
-   
-    console.log("date: ", dateString);
-    this.setState({date:dateString}) 
+
+  onDate(date, dateString, a) {
+   console.log(dateString)
+   console.log(date)
+    console.log("dates: ",moment(dateString).format());
+      if(date!=null)
+        this.setState({dateO:dateString,
+          dates:moment(dateString).format()})
+      else
+      console.log("date null")
+        //02/01/2019
   }
 
   onChange(time, timeString) {
@@ -79,16 +116,18 @@ class Form_sam extends Component {
   }
   
   onStartTime(val){
-    try {console.log(val._d)
-    this.setState({start_time:val})}
-
+    console.log(val)
+    try { console.log(moment(val._d).format('LT'))
+    this.setState({start_time:moment(val._d).format('LT'), start_times:val})}
+    
     catch(e){console.log(e)}
-      
+    
   }
   
   onEndTime(val){
-    try {console.log(val._d)
-    this.setState({end_time:val})}
+    console.log(val)
+    try {console.log(moment(val._d).format('LT'))
+    this.setState({end_time:moment(val._d).format('LT'),end_times:val})}
     
     catch(e){console.log(e)} 
   }
@@ -121,11 +160,37 @@ class Form_sam extends Component {
 
   
       async submit() {
-        const { date, start_time, end_time, title, price, category, status } = this.state
+        if(this.state.submitType==1){ //first time
+          const { dateO,dates, start_time,start_times, end_time,end_times, title, price, category, status } = this.state
           const res = await axios.post('/submit', {
-            date, start_time, end_time, title, price, category, status
-          }).then((res)=>{console.log("Success");return "Success"})
-          .catch((err)=>{console.log("failed");return "Failed"})
+            dates,dateO, start_time,start_times, end_time,end_times, title, price, category, status
+          }).then((res)=>{
+            this.props.history.push('/')
+            // this.setState({loading:false, redirect:true}
+              
+            //   );
+          console.log("Success");
+          
+          return "success"
+          })
+          .catch((err)=>{this.setState({loading:false});console.log("failed");return "Failed"})
+        }
+        else{
+          const { id, dateO,dates, start_time,start_times, end_time,end_times, title, price, category, status } = this.state
+          const res = await axios.post('/update_this', {id, 
+            dates,dateO, start_time,start_times, end_time,end_times, title, price, category, status
+          }).then((res)=>{
+            this.props.history.push('/')
+            // this.setState({loading:false, redirect:true}
+              
+            //   );
+          console.log("Success");
+          
+          return "success"
+          })
+          .catch((err)=>{this.setState({loading:false});console.log("failed");return "Failed"})
+        }
+        
           
       }
   
@@ -141,7 +206,18 @@ class Form_sam extends Component {
       // onOk(value) {
       //   // console.log("onOk: ", value)
       // }
+
+
+      redirecter(){
+        
+      }
   render() {
+
+
+    if(this.state.redirect) {
+      console.log("please redirect")
+      console.log(this.props.location.pathname)
+    }
     const { RangePicker } = DatePicker;
     const { Header, Footer, Sider, Content } = Layout;
     const formItemLayout = {
@@ -180,7 +256,6 @@ class Form_sam extends Component {
           <Icon type="user" />
           InActive
         </Menu.Item>
-
       </Menu>
     );
 
@@ -203,7 +278,6 @@ class Form_sam extends Component {
       }
     };
 
-   
 
     return (
       <div className="back">
@@ -216,38 +290,80 @@ class Form_sam extends Component {
               <div className="text">
                 <Form.Item {...formItemLayout} label="Date">
                   <div className="element">
-                    <DatePicker
-                      className="inp"
-                      showTime
-                      placeholder="Select Date"
-                      onChange={this.onDate}
-                      onOk={this.onOk}
-                      defaultValue={moment(this.state.date)}
-                    />
+                  {
+                    this.state.updated?
+                    <DatePicker className="inp"
+                    placeholder="Select Date"
+                    onOk={this.onOk} 
+                    showTime
+                    mode='date'
+                    value={moment(this.state.dates)}
+                    format={'lll'}
+                    allowClear={false}
+                    onPanelChange={()=>console.log("onPanelChange")}
+                    onOpenChange={()=>console.log("onOpenChange")}
+                    onChange={(date, dateString) => this.onDate(date, dateString)} 
+                   />:
+                   <DatePicker className="inp"
+                   placeholder="Select Date"
+                   onOk={this.onOk} 
+                   showTime
+                   mode='date'
+                   format={'lll'}
+                   onChange={(date, dateString) => this.onDate(date, dateString)} 
+                  />
+                    
+                  }
                   </div>
                 </Form.Item>
               </div>
               <div className="text">
                 <Form.Item {...formItemLayout} label="Start Time">
                   <div className="element">
-                    <TimePicker
+                    {
+
+                      this.state.updated?
+                      <TimePicker
                       className="inp"
                       use12Hours
                       format="h:mm a"
+                    allowClear={false}
+                      value={moment(this.state.start_times)}
                       onChange={this.onStartTime}
-                    />
+                    />:
+                    <TimePicker
+                    className="inp"
+                    use12Hours
+                    format="h:mm a"
+                    onChange={this.onStartTime}
+                  />
+                    }
+
+                    
                   </div>
                 </Form.Item>
               </div>
               <div className="text">
                 <Form.Item {...formItemLayout} label="End Time">
                   <div className="element">
+                  {
+
+                    this.state.updated?
                     <TimePicker
                       className="inp"
                       use12Hours
                       format="h:mm a"
+                    allowClear={false}
+
+                      value={moment(this.state.end_times)}
                       onChange={this.onEndTime}
-                    />
+                    /> :
+                    <TimePicker
+                    className="inp"
+                    use12Hours
+                    format="h:mm a"
+                    onChange={this.onEndTime}
+                  />}
                   </div>
                 </Form.Item>
               </div>
@@ -270,7 +386,7 @@ class Form_sam extends Component {
                   <div className="element">
                     <Dropdown overlay={menu}  >
                       <Button className="inp">
-                        {this.state.title}
+                        {this.state.category?this.state.category:'Category'}
                         <Icon type="down" />
                       </Button>
                     </Dropdown>
@@ -293,18 +409,16 @@ class Form_sam extends Component {
                   <div className="element">
                     <Dropdown overlay={statusMenu}>
                       <Button className="inp">
-                        STATUS <Icon type="down" />
+                        {this.state.status?this.state.status:'Status'} <Icon type="down" />
                       </Button>
                     </Dropdown>
                   </div>
                 </Form.Item>
               </div>
               <div>
-                <Link to="/#"> 
                   
                 
                   <Button onClick={this.onSubmit} className="but">Save</Button>
-                </Link>
                 <span style={{ padding: 40 }} />
                 <Button className="but">Cancel </Button>
               </div>

@@ -13,7 +13,8 @@ mongoose.connection.on('error', function(err){
 })
 
 var customer_scheme = new mongoose.Schema({
-    date : {type: String}, start_time:{type: String}, end_time:{type: String}, title:{type: String}, price:{type: String},
+    dateO:String, dates:Object, start_time:{type: String}, start_times:{type: String}, end_time:{type: String},
+    end_times:{type: String}, title:{type: String}, price:{type: String},
      category:{type: String}, status:{type: String}
 })
 

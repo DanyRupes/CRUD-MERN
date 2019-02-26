@@ -18,8 +18,8 @@ app.use(express.static(path.join(__dirname, '/src')))
 
     app.post('/submit',(req, res)=>{
         console.log(req.body)
-        const { date, start_time, end_time, title, price, category, status } = req.body
-            mongo.Customer({date, start_time, end_time, title, price, category, status}).save()
+        const { dateO,dates, start_time,start_times, end_time,end_times, title, price, category, status } = req.body
+            mongo.Customer({dateO,dates, start_time,start_times, end_time,end_times, title, price, category, status}).save()
                 .then((out)=>{
                     console.log(out)
                     res.send("Success")})
@@ -46,9 +46,9 @@ app.use(express.static(path.join(__dirname, '/src')))
     // for updating a edited booking over already stored
     app.post('/update_this',(req, res)=>{
         console.log(req.body)
-        const { date, start_time, end_time, title, price, category, status } = req.body
+        const { dateO,dates, start_time,start_times, end_time,end_times,  title, price, category, status } = req.body
         mongo.Customer.findOneAndUpdate({_id:req.body.id},{$set:{
-            date, start_time, end_time, title, price, category, status
+            "dateO":dateO,"dates":dates, start_time,start_times, end_time,end_times,  title, price, category, status
         }})
         .then((out)=>res.send(out))
         .catch((err)=>res.send(err))

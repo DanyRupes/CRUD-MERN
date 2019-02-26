@@ -2,8 +2,6 @@ import "antd/dist/antd.css";
 import { Card, Layout, Menu, Icon, Divider } from "antd";
 import React, { Component } from "react";
 import { HashRouter, Route, NavLink } from "react-router-dom";
-import View1 from "./View1";
-import View2 from "./View2";
 import { Row, Col } from "antd";
 
 class Details extends Component {
@@ -87,8 +85,7 @@ class Details extends Component {
                 }}
               >
                 <div>
-                  <Route path="/View2" component={View2} />
-                  <Route exact path="/View1" exact component={View1} />
+            
                 </div>
               </Content>
             </Layout>
