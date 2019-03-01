@@ -6,7 +6,7 @@ class End extends Component {
     return (
       <Layout>
         <Footer style={{ maxHeight: "50px", textAlign: "center" }}>
-          Raydeous ©2019 Created by The Blues Consultants.
+          Service ©2019 Created by The Blues Consultants.
         </Footer>
       </Layout>
     );

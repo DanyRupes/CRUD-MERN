@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import {NavLink , HashRouter,BrowserRouter, Router, Route, Redirect } from "react-router-dom";
 import "antd/dist/antd.css";
-import { Layout, Menu, Breadcrumb, Icon, Row, Col, Input, Button, Avatar } from "antd";
+import { Layout, Menu, Breadcrumb, Icon, Row, Col, Input, Button, Avatar ,Card} from "antd";
 import Form_sam from "./Components/Form_sam";
 import Contents from "./Components/Contents";
 import Head from './Components/Head'
@@ -78,7 +78,7 @@ callBackendAPI = async () => {
           <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
             <Menu.Item key="1">
               <Icon type="dashboard" />
-              <span>Dashboard</span>
+              <span>Home</span>
             </Menu.Item>
             <Menu.Item key="2">
               <NavLink exact to="/Account">
@@ -88,15 +88,15 @@ callBackendAPI = async () => {
             </Menu.Item>
             <Menu.Item key="3">
               <Icon type="calendar" />
-              <span>Calendar</span>
+              <span>Services</span>
             </Menu.Item>
             <Menu.Item key="4">
               <Icon type="rise" />
-              <span>Analytics</span>
+              <span>Cart</span>
             </Menu.Item>
             <Menu.Item key="5">
               <Icon type="setting" />
-              <span>Settings</span>
+              <span>Logout</span>
             </Menu.Item>
           </Menu>
         </Sider>

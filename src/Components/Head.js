@@ -50,15 +50,18 @@ class Head extends Component {
                 <Link to={{ pathname: '/register', state: { rowdy: 'A'} }}>Add Deals </Link>
             </Button>
           </Col>
-          <Col span={2} xs={3} lg={2}>
-            <Icon type="mail" theme="filled" style={{ fontSize: 25 }} />
+          <Col span={2} xs={2} lg={1} style={{ marginTop: -5 }}>
+            <Icon type="mail" theme="filled" style={{ fontSize: 20}} />
           </Col>
-          <Col span={2} xs={3} lg={2}>
-            <Icon type="bell" theme="filled" style={{ fontSize: 25 }} />
+          <Col span={2} xs={3} lg={3} style={{ marginTop: -5 }}>
+            <Icon type="environment"  style={{ fontSize: 20 }} />
+            <a style={{color:'blue', paddingLeft:6}} href="#">Select Location</a>
           </Col>
+
+
           <Col span={2} xs={3} lg={2} style={{ marginTop: -5 }}>
             <Dropdown overlay={menu} trigger={["click"]}>
-              <a className="ant-dropdown-link" href="#">
+              <a style={{color:'green'}} className="ant-dropdown-link" href="#">
                 <Avatar
                   size="large"
                   src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
