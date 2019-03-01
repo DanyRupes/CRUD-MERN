@@ -62,7 +62,7 @@ componentWillUnmount(){
         <Card style={{ width: 1132, height: "fit-content" }}>
             <Col span={3}>
               <img
-                src="http://hdwallpapersrocks.com/wp-content/uploads/2013/10/Small-plant-of-tree-beautiful-nature.jpg"
+                src={item.img_file}
                 width="100"
               />
             </Col>
@@ -95,7 +95,9 @@ componentWillUnmount(){
            <Anchor />
             </Col>
             <Col span={2}>
-            <Link to={{pathname:'/register',state:{edit_id:item._id}}}>Edit</Link>
+              <Link to={{pathname:'/register',state:{edit_id:item._id}}}>
+                <p style={{color:'blue'}}>Edit</p>
+              </Link>
             </Col>
             <Col span={1}>
               <Divider type="vertical" />

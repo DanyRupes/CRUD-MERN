@@ -40,11 +40,13 @@ class Form_sam extends Component {
       title: "",
       price: "",
       category: "Select Category",
-      img: "",
+      img_file:"",
+      img_info:"",
       status: "Set Status",
       loading:true,
       redirect: false,
       submitType:1,
+      isFormHere:false,
     };
     this.onDate = this.onDate.bind(this)
     this.onStartTime = this.onStartTime.bind(this)
@@ -56,11 +58,19 @@ class Form_sam extends Component {
     this.onCategory = this.onCategory.bind(this)
     this.onStatus = this.onStatus.bind(this)
     this.onSubmit = this.onSubmit.bind(this) 
+    this.uploadData=this.uploadData.bind(this)
   }
 
 
+  componentDidMount(){
+    // this.setState({isFormHere:true})
+  }
+
+  componentWillUnmount(){
+    // this.setState({isFormHere:false})    
+  }
   componentWillMount(){
-    console.log(this.props)
+    
    try{
      const { edit_id } = this.props.location.state
      console.log(edit_id) //this.props.location.edit_id
@@ -72,20 +82,28 @@ class Form_sam extends Component {
             console.log(out.data)
             //  this.setState({date:out.data.date})
             
+            const { dateO,dates,_id,start_time,end_time,start_times,
+              end_times,title,price,category,status, img_file} = out.data
+
             this.setState({
-              "dateO":out.data.dateO,
-              dates:out.data.dates,
+              "dateO":dateO,
+              dates:dates,
               updated:true,
+              "id":_id,
               submitType:2,
-              "id":out.data._id,
-            start_time:out.data.start_time,end_time:out.data.end_time,
-            start_times:out.data.start_times, end_times:out.data.end_times,
-            title:out.data.title,price:out.data.price,category:out.data.category,
-            status:out.data.status})
+            start_time:start_time,end_time:end_time,
+            start_times:start_times, end_times:end_times,
+            title:title,price:price,category:category,
+            img_file:img_file,
+            status:status})
             
             console.log("----------------------------")
-            console.log(this.state.dates)
- 
+              let et = moment(out.data.end_times)
+              let st = moment(out.data.start_times)
+
+
+              let duration = moment.duration(et.diff(st))
+            console.log(duration.asSeconds())
       })
       .catch((err)=>console.log(err))
      }else {
@@ -143,13 +161,25 @@ class Form_sam extends Component {
   }
 
   onCategory(val) {
+    console.log("--------------------------------------")
     console.log(val.key)
-    this.setState({category:val.key==1?"Item1":val.key==2?"Item2":"Item3"})
+    this.setState({category:val.key==1?"Mediterranean":val.key==2?"Mexican":"Indian"})
   }
 
   
-  uploadData(data) {
-    console.log(data)
+  uploadData(info) {
+    this.setState({img_file:info.file})
+    console.log(info)
+        if (info.file.status !== "uploading") {
+          console.log(info.file.response);
+        }
+        if (info.file.status === "done") {
+          this.setState({img_file:info.file.response.url})
+          message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === "error") {
+          message.error(`${info.file.name} file upload failed.`);
+        
+      }
   }
   
   onStatus(val) {
@@ -159,16 +189,17 @@ class Form_sam extends Component {
   
 
   
-      async submit() {
+  async submit() {
+    // console.log(this.state)
+  
+    
+    const { id,dateO,dates, start_time,start_times, end_time,end_times, title, price, category, status,img_file } = this.state
         if(this.state.submitType==1){ //first time
-          const { dateO,dates, start_time,start_times, end_time,end_times, title, price, category, status } = this.state
-          const res = await axios.post('/submit', {
-            dates,dateO, start_time,start_times, end_time,end_times, title, price, category, status
+          axios.post('/submit',{
+            dates,dateO, start_time,start_times, end_time,end_times, title, price, category, status, img_file
           }).then((res)=>{
             this.props.history.push('/')
-            // this.setState({loading:false, redirect:true}
-              
-            //   );
+            this.setState({loading:false});
           console.log("Success");
           
           return "success"
@@ -176,9 +207,8 @@ class Form_sam extends Component {
           .catch((err)=>{this.setState({loading:false});console.log("failed");return "Failed"})
         }
         else{
-          const { id, dateO,dates, start_time,start_times, end_time,end_times, title, price, category, status } = this.state
-          const res = await axios.post('/update_this', {id, 
-            dates,dateO, start_time,start_times, end_time,end_times, title, price, category, status
+          axios.post('/update_this', {id, 
+            dates,dateO, start_time,start_times, end_time,end_times, title, price, category, status,img_file
           }).then((res)=>{
             this.props.history.push('/')
             // this.setState({loading:false, redirect:true}
@@ -234,15 +264,15 @@ class Form_sam extends Component {
       <Menu>
         <Menu.Item key="1" onClick={this.onCategory} >
           <Icon type="user" />
-          1st item
+          Mediterranean
         </Menu.Item>
         <Menu.Item key="2" onClick={this.onCategory}  >
           <Icon type="user" />
-          2nd item
+          Mexican
         </Menu.Item>
         <Menu.Item key="3"  onClick={this.onCategory} >
           <Icon type="user" />
-          3rd item
+          Indian
         </Menu.Item>
       </Menu>
     );
@@ -260,22 +290,13 @@ class Form_sam extends Component {
     );
 
     const props = {
-      name: "file",
-      action: "//jsonplaceholder.typicode.com/posts/",
+      name: "image",
+      action: "/upload_image/test",
       headers: {
         authorization: "authorization-text"
       },
-      onChange(info) {
-        if (info.file.status !== "uploading") {
-          console.log(info.file, info.fileList);
-        }
-        if (info.file.status === "done") {
-          this.setState({img:info})
-          message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === "error") {
-          message.error(`${info.file.name} file upload failed.`);
-        }
-      }
+    
+       
     };
 
 
@@ -284,9 +305,9 @@ class Form_sam extends Component {
         <br />
         <h1 className="head">REGISTRATION FORM</h1>
         <Row>
-          <Col span={8} />
-          <Col className="content" span={8}>
-            <Form>
+          <Col span={7} />
+          <Col className="content" span={9}>
+            <Form >
               <div className="text">
                 <Form.Item {...formItemLayout} label="Date">
                   <div className="element">
@@ -394,8 +415,8 @@ class Form_sam extends Component {
                 </Form.Item>
               </div>
               <div className="text">
-                <Form.Item {...formItemLayout} label="Image">
-                  <Upload {...props} data={this.uploadData}>
+                <Form.Item  {...formItemLayout} label="Image">
+                  <Upload {...props} onChange={this.uploadData} >
                     <div className="element">
                       <Button className="inp">
                         <Icon type="upload" /> CLICK TO UPLOAD
@@ -415,11 +436,11 @@ class Form_sam extends Component {
                   </div>
                 </Form.Item>
               </div>
-              <div>
+              <div className="submitBtn">
                   
                 
-                  <Button onClick={this.onSubmit} className="but">Save</Button>
-                <span style={{ padding: 40 }} />
+              <Button onClick={this.onSubmit} className="but">Save</Button>
+              <span style={{ padding: 40 }} />
                 <Button className="but">Cancel </Button>
               </div>
             </Form>
@@ -431,3 +452,15 @@ class Form_sam extends Component {
   }
 }
 export default Form_sam;
+
+
+
+
+// let et = moment(out.data.end_times)
+// let st = moment(out.data.start_times)
+// let duration =moment.duration(et.diff(st))
+// var hours = parseInt(duration.asHours());
+// var minutes = parseInt(duration.asMinutes())%60;
+
+
+// console.log(duration, hours, minutes)

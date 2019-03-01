@@ -1,14 +1,30 @@
 @import "../node_modules/antd/dist/antd.css";
+
 .App {
   text-align: center;
 }
+.ant-divider-vertical {
+  height: 30px;
+}
+.font {
+  font-size: small;
+  text-align: center;
+}
+.logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+
+  margin: 16px;
+}
+.search {
+  border: 0;
+}
 .head {
-  font-family: "Times New Roman";
   font-size: 30px;
+  text-align: center;
 }
 .content {
   padding: 30px;
-  font-family: "Times New Roman";
   text-transform: capitalize;
   font-size: 50px;
   height: 650px;
@@ -24,11 +40,28 @@
   width: 195px;
 }
 .back {
-  background-image: url("https://visme.co/blog/wp-content/uploads/2017/07/50-Beautiful-and-Minimalist-Presentation-Backgrounds-03.jpg");
 }
 .but {
   width: 100px;
 }
-.seccard {
-  margin-top: "5px";
+.rowpad {
+  padding: 20px;
+}
+.cont {
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.avatar-uploader > .ant-upload {
+  width: 128px;
+  height: 128px;
+}
+a {
+  color: #ffffff;
+  text-decoration: none;
+}
+a:hover {
+  color: #ffffff;
+}
+.submitBtn {
+  margin-left: 18%;
+
 }
